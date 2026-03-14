@@ -21,11 +21,11 @@ It gives probability of ```[A better, B better, Tie]``` for both facts and style
 4. Ignore training code.
 
 ## How to train?
-1. Make sure that data is in csv format.
+1. Make sure data is in csv format.
 2. Run training script:
     ```bash
     python train.py --data_path path_to_csv.csv --num_epochs 3
     ```
   - Replace path_to_csv.csv with the path to your dataset.
   - Replace 3 with the number of epochs you want to train for.
-3. After training, both the best model and the latest model will be saved as .pt in working directory
+3. After training, both the best model and the latest model will be saved as `.pt` in working directory
