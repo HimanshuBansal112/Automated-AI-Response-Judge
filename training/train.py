@@ -154,7 +154,7 @@ def eval_one_epoch(test_loader, model, device):
 def train(num_epochs=3, data_path="data.csv"):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    main_model = AutoModel.from_pretrained("microsoft/deberta-v3-base", cache_dir="./models")
+    main_model = AutoModel.from_pretrained("microsoft/deberta-v3-base", cache_dir="./models", use_safetensors=True)
     tokenizer = AutoTokenizer.from_pretrained("microsoft/deberta-v3-base", use_fast=False, cache_dir="./models")
     
     train_dataset, test_dataset = create_dataset(tokenizer, data_path)
