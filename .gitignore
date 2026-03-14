@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+venv/
+db.sqlite3
+agent_log.json
+.env
+models/
+*.sqlite3
+**/migrations/*
+!**/migrations/__init__.py
+!**/migrations/

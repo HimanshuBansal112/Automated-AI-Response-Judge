@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Response Judge</title>
+<style>
+	body { 
+		font-family: Arial, 
+		sans-serif; margin: 2rem; 
+		background-color: #f5f5f5;
+	}
+	.prompt-card {
+		background: white;
+		padding: 1rem;
+		margin-bottom: 1.5rem;
+		border-radius: 8px;
+		box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+	}
+	textarea {
+		width: 100%;
+		padding: 0.5rem;
+		margin-top: 0.3rem;
+		margin-bottom: 0.5rem;
+		border-radius: 5px;
+		border: 1px solid #ccc;
+	}
+	button {
+		margin-top: 0.5rem;
+		padding: 0.5rem 1rem;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		background-color: #4CAF50;
+		color: white;
+	}
+	button:disabled {
+		cursor: not-allowed;
+		background-color: #A5D6A7;
+	}
+	.result {
+		margin-top: 0.5rem;
+		font-weight: bold;
+	}
+</style>
+</head>
+<body>
+
+<h1>AI Response Judge</h1>
+
+<div class="prompt-card">
+	<label>Enter Prompt:</label>
+	<textarea id="prompt-text" rows="2" placeholder="Type your prompt here"></textarea>
+
+	<label>Response A:</label>
+	<textarea id="responseA-text" rows="2" placeholder="Type Response A here"></textarea>
+
+	<label>Response B:</label>
+	<textarea id="responseB-text" rows="2" placeholder="Type Response B here"></textarea>
+
+	<button onclick="addPrompt()">Add Prompt</button>
+</div>
+
+<h2>Prompts to Judge</h2>
+<div id="prompts-list">
+</div>
+
+<div id="result-container" style="margin-top: 2rem;"></div>
+
+<button id="submit-btn" onclick="submitAll()">Submit All</button>
+<button onclick="clearPrompts()">Clear Added Prompts</button>
+<button onclick="clearResults()">Clear Results</button>
+
+<script>
+	let promptList = {
+		"prompt":[],
+		"response_a":[],
+		"response_b":[]
+	};
+	
+	function getCookie(name) {
+		let cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			const cookies = document.cookie.split(';');
+			for (let i = 0; i < cookies.length; i++) {
+				const cookie = cookies[i].trim();
+				if (cookie.startsWith(name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+	
+	const csrftoken = getCookie('csrftoken');
+
+	function addPrompt() {
+		clearResults();
+		const promptText = document.getElementById('prompt-text').value.trim();
+		const responseA = document.getElementById('responseA-text').value.trim();
+		const responseB = document.getElementById('responseB-text').value.trim();
+
+		if (!promptText || !responseA || !responseB) {
+			alert("Please fill in prompt and both responses.");
+			return;
+		}
+
+		const idx = promptList["prompt"].length;
+		promptList["prompt"].push(promptText);
+		promptList["response_a"].push(responseA);
+		promptList["response_b"].push(responseB);
+
+		const listContainer = document.getElementById('prompts-list');
+		const card = document.createElement('div');
+		card.className = 'prompt-card';
+		card.id = `prompt-card-${idx}`;
+		card.innerHTML = `
+			<p><strong>Prompt ${idx+1}:</strong> ${promptText}</p>
+			<p><strong>Response A:</strong> ${responseA}</p>
+			<p><strong>Response B:</strong> ${responseB}</p>
+		`;
+		listContainer.appendChild(card);
+
+		document.getElementById('prompt-text').value = '';
+		document.getElementById('responseA-text').value = '';
+		document.getElementById('responseB-text').value = '';
+	}
+	
+	function displayCombinedResults(data) {
+		const factArr = data.Fact.map(f => (parseFloat(f) * 100).toFixed(2));
+		const styleArr = data.Style.map(s => (parseFloat(s) * 100).toFixed(2));
+
+		let html = `
+			<table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;">
+				<thead>
+					<tr>
+						<th style="border-bottom: 2px solid #333; padding: 0.5rem;">Metric</th>
+						<th colspan="3" style="border-bottom: 2px solid #333; padding: 0.5rem;">Values</th>
+					</tr>
+					<tr>
+						<th></th>
+						<th style="border-bottom: 1px solid #999; padding: 0.5rem;">A</th>
+						<th style="border-bottom: 1px solid #999; padding: 0.5rem;">B</th>
+						<th style="border-bottom: 1px solid #999; padding: 0.5rem;">Tie</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="padding: 0.5rem; font-weight:bold;"><center>Fact Scores</center></td>
+						<td style="padding: 0.5rem; font-family: monospace;"><center>${factArr[0] || ""}</center></td>
+						<td style="padding: 0.5rem; font-family: monospace;"><center>${factArr[1] || ""}</center></td>
+						<td style="padding: 0.5rem; font-family: monospace;"><center>${factArr[2] || ""}</center></td>
+					</tr>
+					<tr>
+						<td style="padding: 0.5rem; font-weight:bold;"><center>Style Scores</center></td>
+						<td style="padding: 0.5rem; font-family: monospace;"><center>${styleArr[0] || ""}</center></td>
+						<td style="padding: 0.5rem; font-family: monospace;"><center>${styleArr[1] || ""}</center></td>
+						<td style="padding: 0.5rem; font-family: monospace;"><center>${styleArr[2] || ""}</center></td>
+					</tr>
+				</tbody>
+			</table>
+		`;
+
+		document.getElementById("result-container").innerHTML = html;
+	}
+	
+	function clearResults() {
+		document.getElementById("result-container").innerHTML = "";
+	}
+	
+	function clearPrompts() {
+		document.getElementById('prompts-list').innerHTML = "";
+		promptList["prompt"] = [];
+		promptList["response_a"] = [];
+		promptList["response_b"] = [];
+	}
+
+	async function submitAll() {
+		clearResults();
+		document.getElementById("submit-btn").disabled = true;
+		try {
+			const res = await fetch('/predict', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': csrftoken
+				},
+				body: JSON.stringify(promptList)
+			});
+			const data = await res.json();
+			displayCombinedResults(data);
+		} catch(err) {
+			console.error(err);
+			document.getElementById("result-container").innerText = err;
+		}
+		document.getElementById("submit-btn").disabled = false;
+	}
+</script>
+</body>
+</html>
