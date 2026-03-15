@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+{% load list_index %}
+<head>
+    <title>Evaluation History</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+        }
+
+        .chat-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+
+        .message {
+            margin-bottom: 10px;
+        }
+
+        .prompt {
+            font-weight: bold;
+        }
+
+        .llm-a {
+            color: blue;
+        }
+
+        .llm-b {
+            color: green;
+        }
+
+        .scores {
+            margin-top: 20px;
+            background: #f5f5f5;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Evaluation History</h1>
+
+{% for output in outputs %}
+
+<div class="chat-box">
+
+    <h3>Chat {{ forloop.counter }}</h3>
+
+    {% with prompts=output.chat_input.prompt responses_a=output.chat_input.response_a responses_b=output.chat_input.response_b %}
+
+        {% for p in prompts %}
+        
+        <div class="message prompt">
+            User: {{ p }}
+        </div>
+
+        <div class="message llm-a">
+            LLM A: {{ responses_a|index:forloop.counter0 }}
+        </div>
+
+        <div class="message llm-b">
+            LLM B: {{ responses_b|index:forloop.counter0 }}
+        </div>
+
+        <hr>
+
+        {% endfor %}
+
+    {% endwith %}
+
+    <div class="scores">
+        <strong>Fact Scores:</strong><br>
+        A: {{ output.fact_score_a }} |
+        B: {{ output.fact_score_b }} |
+        Tie: {{ output.fact_tie }}
+
+        <br><br>
+
+        <strong>Style Scores:</strong><br>
+        A: {{ output.style_score_a }} |
+        B: {{ output.style_score_b }} |
+        Tie: {{ output.style_tie }}
+    </div>
+
+</div>
+
+{% endfor %}
+
+</body>
+</html>

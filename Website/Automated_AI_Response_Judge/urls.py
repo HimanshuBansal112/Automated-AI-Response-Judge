@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from Comparer.views import index, predict
+from Comparer.views import index, predict, history
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", index, name="index"),
     path("predict", predict, name="predict"),
+    path("history", history, name="history"),
 ]
