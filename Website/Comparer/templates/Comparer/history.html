@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-{% load list_index %}
+{% load functions %}
 <head>
     <title>Evaluation History</title>
     <style>
@@ -72,16 +72,16 @@
 
     <div class="scores">
         <strong>Fact Scores:</strong><br>
-        A: {{ output.fact_score_a }} |
-        B: {{ output.fact_score_b }} |
-        Tie: {{ output.fact_tie }}
+        A: {{ output.fact_score_a|to_percent }} |
+        B: {{ output.fact_score_b|to_percent }} |
+        Tie: {{ output.fact_tie|to_percent }}
 
         <br><br>
 
         <strong>Style Scores:</strong><br>
-        A: {{ output.style_score_a }} |
-        B: {{ output.style_score_b }} |
-        Tie: {{ output.style_tie }}
+        A: {{ output.style_score_a|to_percent }} |
+        B: {{ output.style_score_b|to_percent }} |
+        Tie: {{ output.style_tie|to_percent }}
     </div>
 
 </div>
