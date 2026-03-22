@@ -14,16 +14,6 @@ tokenizer_style = None
 model_fact = None
 processor_fact = None
 
-def segment_mean_fixed(self, values, lengths):
-    device = values.device
-
-    values_cpu = values.cpu()
-
-    chunks = torch.split(values_cpu, lengths)
-    result = torch.stack([chunk.mean(dim=0) for chunk in chunks])
-
-    return result.to(device)
-
 @app.on_event("startup")
 def load_model_style():
     global device, model_style, tokenizer_style, model_fact, processor_fact
@@ -54,7 +44,6 @@ def load_model_style():
     
     model_fact = AutoModelForImageTextToText.from_pretrained("Qwen/Qwen3.5-2B", cache_dir="./models")
     
-    model_style.segment_mean = segment_mean_fixed.__get__(model_style)
     model_style = model_style.float()
     
     model_style = model_style.to(device)
@@ -68,7 +57,7 @@ def style_predict(prompt: list[str], response_a: list[str], response_b: list[str
     tokenized_response_1 = {k: v.to(device) for k, v in tokenized_response_1.items()}
     tokenized_response_2 = {k: v.to(device) for k, v in tokenized_response_2.items()}
 
-    chunk_size = tokenized_response_1["input_ids"].shape[0]
+    chunk_size = torch.tensor([tokenized_response_1["input_ids"].shape[0]], dtype=torch.long, device=device)
     
     with torch.no_grad():
         output = model_style(tokenized_response_1, tokenized_response_2, chunk_size)
