@@ -16,10 +16,11 @@ prompt, response_a and response_b are "lists of string" saved as string
 """
 
 import argparse
-import pandas as pd
-from transformers import AutoTokenizer
 import json
+
+import pandas as pd
 from tqdm import tqdm
+from transformers import AutoTokenizer
 
 def safe_json(cell):
     try:

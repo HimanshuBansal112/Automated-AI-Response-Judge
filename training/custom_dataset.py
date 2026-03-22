@@ -16,10 +16,11 @@ prompt, response_a and response_b are "lists of string" saved as string
 """
 
 import argparse
+
 import torch
+from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset
 from tqdm import tqdm
-from sklearn.model_selection import train_test_split
 
 from data_preprocessing import prepare
 from tokenizer import robust_tokenize

@@ -1,9 +1,10 @@
-from fastapi import FastAPI
 import torch
-import torch_directml
-from tools import prepare_for_style, prepare_for_fact
-from transformers import AutoProcessor, AutoTokenizer, AutoModel, AutoModelForImageTextToText
 import torch.nn.functional as F
+import torch_directml
+from fastapi import FastAPI
+from transformers import AutoModel, AutoModelForImageTextToText, AutoProcessor, AutoTokenizer
+
+from tools import prepare_for_fact, prepare_for_style
 
 app = FastAPI()
 

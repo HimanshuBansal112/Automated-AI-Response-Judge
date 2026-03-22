@@ -1,10 +1,12 @@
 import json
+
 import requests
 
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
-from .models import PromptRecord, EvaluationResult
+
+from .models import EvaluationResult, PromptRecord
 
 def index(request):
     return render(request, "Comparer/index.html")
