@@ -29,7 +29,7 @@ def load_model_style():
     device = torch.device("cpu")
     
     tokenizer_style = AutoTokenizer.from_pretrained(
-        "Himanshu167/AI-Response-Comparer",
+        "Himanshu167/AI-Response-Comparer-v1.5",
         trust_remote_code=True,
         cache_dir="./models"
     )
@@ -37,7 +37,7 @@ def load_model_style():
     processor_fact = AutoProcessor.from_pretrained("Qwen/Qwen3.5-2B", cache_dir="./models")
 
     model_style = AutoModel.from_pretrained(
-        "Himanshu167/AI-Response-Comparer",
+        "Himanshu167/AI-Response-Comparer-v1.5",
         trust_remote_code=True,
         cache_dir="./models"
     )
