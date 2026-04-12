@@ -28,4 +28,7 @@ It gives probability of ```[A better, B better, Tie]``` for both facts and style
     ```
   - Replace path_to_csv.csv with the path to your dataset.
   - Replace 3 with the number of epochs you want to train for.
-3. After training, both the best model and the latest model will be saved as `.pt` in working directory
+3. After training, both the best model and the latest model will be saved as `.pt` in working directory.
+
+# Note:
+You may need to run ```pip uninstall brotli brotlicffi -y``` to prevent tokenizer related error.
