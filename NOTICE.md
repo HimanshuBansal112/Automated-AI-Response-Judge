@@ -1,5 +1,3 @@
-NOTICE
-
 This project was trained using datasets subject to their respective licenses and usage restrictions.
 
 Datasets Used
