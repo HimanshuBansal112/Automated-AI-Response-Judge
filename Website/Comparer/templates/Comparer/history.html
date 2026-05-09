@@ -1,92 +1,175 @@
 <!DOCTYPE html>
 <html>
-{% load functions %}
-<head>
-    <title>Evaluation History</title>
-    <style>
-        body {
-            font-family: Arial;
-            margin: 40px;
-        }
+	{% load functions %}
+	<head>
+		<title>Evaluation History</title>
+		<style>
+			body {
+				font-family: Arial;
+				margin: 40px;
+			}
 
-        .chat-box {
-            border: 1px solid #ccc;
-            padding: 20px;
-            margin-bottom: 40px;
-        }
+			.chat-box {
+				border: 1px solid #ccc;
+				padding: 20px;
+				margin-bottom: 40px;
+			}
 
-        .message {
-            margin-bottom: 10px;
-        }
+			.message {
+				display: flex;
+				gap: 10px;
+				align-items: baseline;
+			}
+			
+			.prompt {
+				font-weight: bold;
+			}
 
-        .prompt {
-            font-weight: bold;
-        }
+			.llm-a {
+				color: blue;
+			}
 
-        .llm-a {
-            color: blue;
-        }
+			.llm-b {
+				color: green;
+			}
 
-        .llm-b {
-            color: green;
-        }
+			.scores {
+				margin-top: 20px;
+				background: #f5f5f5;
+				padding: 10px;
+			}
+			
+			.preserve-lines {
+				white-space: pre-wrap;
+			}
+			
+			.markdown-content {
+				line-height: 1.5;
+			}
 
-        .scores {
-            margin-top: 20px;
-            background: #f5f5f5;
-            padding: 10px;
-        }
-    </style>
-</head>
-<body>
+			.markdown-content pre {
+				background: #1e1e1e;
+				color: white;
+				padding: 12px;
+				border-radius: 6px;
+				overflow-x: auto;
+			}
 
-<h1>Evaluation History</h1>
+			.markdown-content pre {
+				background: #1e1e1e;
+				color: #f8f8f2;
+				padding: 12px;
+				border-radius: 6px;
+				overflow-x: auto;
+			}
 
-{% for output in outputs %}
+			.markdown-content pre code {
+				background: transparent;
+				color: inherit;
+				padding: 0;
+			}
 
-<div class="chat-box">
+			.markdown-content :not(pre) > code {
+				background: #eee;
+				padding: 2px 4px;
+				border-radius: 4px;
+				font-size: 90%;
+			}
+			
+			.label {
+				font-weight: bold;
+				white-space: nowrap;
+			}
 
-    <h3>Chat {{ forloop.counter }}</h3>
+			.markdown-content {
+				line-height: 1.5;
+				min-width: 0;
+			}
 
-    {% with prompts=output.chat_input.prompt responses_a=output.chat_input.response_a responses_b=output.chat_input.response_b %}
+			.markdown-content > :first-child {
+				margin-top: 0 !important;
+			}
 
-        {% for p in prompts %}
-        
-        <div class="message prompt">
-            User: {{ p }}
-        </div>
+			.markdown-content p,
+			.markdown-content h1,
+			.markdown-content h2,
+			.markdown-content h3,
+			.markdown-content h4,
+			.markdown-content h5,
+			.markdown-content h6,
+			.markdown-content ul,
+			.markdown-content ol,
+			.markdown-content blockquote {
+				margin-top: 0.4em;
+				margin-bottom: 0.4em;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Evaluation History</h1>
 
-        <div class="message llm-a">
-            LLM A: {{ responses_a|index:forloop.counter0 }}
-        </div>
+		{% for output in outputs %}
 
-        <div class="message llm-b">
-            LLM B: {{ responses_b|index:forloop.counter0 }}
-        </div>
+		<div class="chat-box">
 
-        <hr>
+			<h3>Chat {{ forloop.counter }}</h3>
 
-        {% endfor %}
+			{% with prompts=output.chat_input.prompt responses_a=output.chat_input.response_a responses_b=output.chat_input.response_b %}
 
-    {% endwith %}
+				{% for p in prompts %}
+				
+				<div class="message prompt">
+					<span class="label">User:</span>
+					<div class="markdown-content" data-md="{{ p|escape }}"></div>
+				</div>
 
-    <div class="scores">
-        <strong>Fact Scores:</strong><br>
-        A: {{ output.fact_score_a|to_percent }} |
-        B: {{ output.fact_score_b|to_percent }} |
-        Tie: {{ output.fact_tie|to_percent }}
+				<div class="message llm-a">
+					<span class="label">LLM A:</span>
+					<div class="markdown-content" data-md="{{ responses_a|index:forloop.counter0|escape }}"></div>
+				</div>
 
-        <br><br>
+				<div class="message llm-b">
+					<span class="label">LLM B:</span>
+					<div class="markdown-content" data-md="{{ responses_b|index:forloop.counter0|escape }}"></div>
+				</div>
 
-        <strong>Style Scores:</strong><br>
-        A: {{ output.style_score_a|to_percent }} |
-        B: {{ output.style_score_b|to_percent }} |
-        Tie: {{ output.style_tie|to_percent }}
-    </div>
+				<hr>
 
-</div>
+				{% endfor %}
 
-{% endfor %}
+			{% endwith %}
 
-</body>
+			<div class="scores">
+				<strong>Fact Scores:</strong><br>
+				A: {{ output.fact_score_a|to_percent }} |
+				B: {{ output.fact_score_b|to_percent }} |
+				Tie: {{ output.fact_tie|to_percent }}
+
+				<br><br>
+
+				<strong>Style Scores:</strong><br>
+				A: {{ output.style_score_a|to_percent }} |
+				B: {{ output.style_score_b|to_percent }} |
+				Tie: {{ output.style_tie|to_percent }}
+			</div>
+
+		</div>
+
+		{% endfor %}
+
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+		<script>
+			marked.setOptions({
+				breaks: true,
+				gfm: true
+			});
+
+			document.querySelectorAll('.markdown-content').forEach(el => {
+				const rawText = el.dataset.md || "";
+				const html = marked.parse(rawText);
+				el.innerHTML = DOMPurify.sanitize(html);
+			});
+		</script>
+	</body>
 </html>
