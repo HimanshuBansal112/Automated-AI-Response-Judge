@@ -42,6 +42,9 @@
 		margin-top: 0.5rem;
 		font-weight: bold;
 	}
+	.preserve-lines {
+		white-space: pre-wrap;
+	}
 </style>
 </head>
 <body>
@@ -116,9 +119,9 @@
 		card.className = 'prompt-card';
 		card.id = `prompt-card-${idx}`;
 		card.innerHTML = `
-			<p><strong>Prompt ${idx+1}:</strong> ${promptText}</p>
-			<p><strong>Response A:</strong> ${responseA}</p>
-			<p><strong>Response B:</strong> ${responseB}</p>
+			<p class="preserve-lines"><strong>Prompt ${idx+1}:</strong> ${promptText}</p>
+			<p class="preserve-lines"><strong>Response A:</strong> ${responseA}</p>
+			<p class="preserve-lines"><strong>Response B:</strong> ${responseB}</p>
 		`;
 		listContainer.appendChild(card);
 

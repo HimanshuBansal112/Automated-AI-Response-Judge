@@ -50,6 +50,10 @@ def load_model_style():
     model_style.eval()
     model_fact.eval()
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/style_predict")
 def style_predict(prompt: list[str], response_a: list[str], response_b: list[str]) -> list[float]:
     tokenized_response_1, tokenized_response_2 = prepare_for_style(prompt, response_a, response_b, tokenizer_style)
